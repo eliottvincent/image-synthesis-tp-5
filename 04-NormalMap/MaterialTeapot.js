@@ -64,16 +64,51 @@ class MaterialTeapot extends Material
             {
                 // couleur diffuse
                 vec3 Kd = texture2D(texDiffuse, frgTexCoords).rgb;
+                
+                // éclairement ambiant : 20 %
+                gl_FragColor = vec4(Kd * 0.2, 1.0);
+                
+                // vecteur vue
+                vec3 V = normalize(-frgPosition.xyz);
 
-                /// TODO construire le repère TBN
+                // construire le repere TBN
+                vec3 Tcamera = normalize(frgT);
+                vec3 Ncamera = normalize(frgN);
+                vec3 Bcamera = cross(Ncamera, Tcamera);
+                mat3 matTBN = mat3(Tcamera, Bcamera, Ncamera);
+                
+                // aller cherche la normale dans la "normal map" texNormal
+                vec3 Nlocal = texture2D(texNormale, frgTexCoords).rgb * 2.0 - 1.0;
+                
+                // la mettre dans le repere de la camera
+                vec3 N = matTBN * Nlocal;
+                N = normalize(N);
+                
+                for (int i = 0; i < nbL; i++)
+                {
+                    // vecteur allant du fragment à la lampe, non normalisé ici
+                    vec3 L = LightPositions[i].xyz - frgPosition.xyz * LightPositions[i].w;
+                    float dist = length(L);
+                    L = L / dist;   // normalisation de L
+                    vec3 LightColorEffective =  LightColors[i] / (dist*dist);
+                    
+                    // déclaration pour Lambert
+                    float dotNL = clamp(dot(N, L), 0.0, 1.0);
 
-                /// TODO aller chercher la normale dans la "normal map" texNormale
-                vec3 N = normalize(frgN);
+                    // ajout de la composante diffuse (Lambert) 
+                    float D = clamp(dot(N,L), 0.0, 1.0);
+                    
+                    // Lambert
+                    gl_FragColor += vec4(Kd * D * LightColorEffective, 1.0);
 
-                /// TODO la mettre dans le repère global et la normaliser
-
-                /// TODO éclairement de Lambert et Phong ou autre
-                gl_FragColor = vec4(Kd, 1.0);
+                    // Blinn-Phong
+                    vec3 H = normalize(V + L);
+                    float dotNH = clamp(dot(N,H), 0.0, 1.0);
+                    float S = pow(dotNH, ns);
+                    
+                    // Blinn-Phong
+                    gl_FragColor += vec4(S * Ks * LightColorEffective, 1.0);
+                }
             }`;
 
         // compile le shader, recherche les emplacements des uniform et attribute communs
