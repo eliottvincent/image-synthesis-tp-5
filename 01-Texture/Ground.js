@@ -18,10 +18,10 @@ class Ground extends Mesh
         this.m_MatGround = matground;
 
         // ajout des sommets
-        let P1 = new Vertex(this, -100.0, 0.0, +100.0).setTexCoords(  0.0,   0.0);
-        let P2 = new Vertex(this, +100.0, 0.0, +100.0).setTexCoords(200.0,   0.0);
-        let P3 = new Vertex(this, +100.0, 0.0, -100.0).setTexCoords(200.0, 200.0);
-        let P4 = new Vertex(this, -100.0, 0.0, -100.0).setTexCoords(  0.0, 200.0);
+        let P1 = new Vertex(this, -10.0, 0.0, +10.0).setTexCoords(0.0, 0.0);
+        let P2 = new Vertex(this, +10.0, 0.0, +10.0).setTexCoords(8.0, 0.0);
+        let P3 = new Vertex(this, +10.0, 0.0, -10.0).setTexCoords(8.0, 8.0);
+        let P4 = new Vertex(this, -10.0, 0.0, -10.0).setTexCoords(0.0, 8.0);
 
         // ajout des triangles
         this.addQuad(P1, P2, P3, P4);

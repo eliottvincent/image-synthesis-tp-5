@@ -38,7 +38,11 @@ class MaterialGround extends Material
         this.m_TextureLoc = gl.getUniformLocation(this.m_ShaderId, "txColor");
 
         // charge l'image de la terre en tant que texture
-        this.m_Texture = new Texture2D("data/4016.jpg", gl.NEAREST, gl.CLAMP_TO_EDGE);
+        this.m_Texture = new Texture2D(
+            "data/4016.jpg",
+            gl.NEAREST,
+            gl.REPEAT
+        );
     }
 
 
