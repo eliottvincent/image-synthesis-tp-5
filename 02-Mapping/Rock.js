@@ -42,9 +42,21 @@ class Rock extends Mesh
         let coords = vec3.create();
         for (let v of this.m_VertexList) {
 
-            /// TODO faire un calcul correct et pas n'importe quoi comme ceci (en fait, c'est un mapping plan)
-            let s = (v.m_Coords[0] - min[0]) * 0.25;
-            let t = (max[1] - v.m_Coords[1]) * 0.75;
+            // angle de v sur le plan zx par rapport à centre
+            let angle = Math.atan2(
+                v.m_Coords[0] - centre[0],
+                v.m_Coords[2] - centre[2]
+            );
+            let s = angle / (2*Math.PI) + 0.5;  // angle ramené entre 0 et 1
+
+            // MAPING CYLINDRIQUE
+            // hauteur (y) du fragment relativement à la boite AABB
+            // let t = (v.m_Coords[1] - min[1]) / (max[1] - min[1]);
+
+            // MAPING SPHÉRIQUE
+            let n = vec3.distance(v.m_Coords, centre);
+            let y = v.m_Coords[1] - centre[1];
+            let t = Math.asin(y / n) / Math.PI + 0.5
 
             // définition des coordonnées de texture
             v.setTexCoords(s, t);
