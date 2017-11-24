@@ -67,8 +67,18 @@ class MaterialProc extends Material
             {
                 // distance au centre de l'espace des textures
                 float d = 1.0 - 2.0*distance(frgTexCoords, vec2(0.5));
-
-                glFragColor = vec4(frgPositionObjet.x, d, frgPositionObjet.y, 1.0);
+                
+                /*
+                float r = pow(sin(frgTexCoords.s * 40.0 + time * 5.0 ), 50.0);
+                float g = sin(frgTexCoords.t * 32.0 + 0.4 * sin(frgTexCoords.s * 40.0 + time * 2.5));
+                float b = d;
+                glFragColor = vec4(d*r, d*g, d*b, 1.0);
+                */
+                
+                vec3 hsv = vec3(frgTexCoords.s + sin(time * 2.0), 1.0, 1.0);
+                vec3 rgb = hsv2rgb(hsv);
+                
+                glFragColor = vec4(rgb, 1.0);
             }`;
 
         // compile le shader, recherche les emplacements des uniform et attribute communs
