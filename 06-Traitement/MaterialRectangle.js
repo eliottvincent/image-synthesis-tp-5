@@ -71,7 +71,7 @@ class MaterialRectangle extends Material
                 // r = r + 0.02 * pow( sin(12.0 * r - time * 6.0), 7.0) ;
 
                 // rigolo + psychédélique
-                // r = r + pow(sin(r+ time), 7.0) ;
+                // r = r + pow(sin(r+ time), 7.0);
 
                 // altération de l'angle en fonction de la distance
                 // a = a + 2.0 * (0.707-r);

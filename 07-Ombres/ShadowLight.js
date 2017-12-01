@@ -52,18 +52,24 @@ class ShadowLight extends Light
 
         // calculer la matrice d'ombre
         mat4.invert(this.m_ShadowMatrix, matViewCamera);
-        /// FIXME le calcul n'est pas fini, la matrice est donc fausse
+        mat4.multiply(this.m_ShadowMatrix,this.m_MatLightView, this.m_ShadowMatrix);
+        mat4.multiply(this.m_ShadowMatrix,this.m_MatLightProjection, this.m_ShadowMatrix);
+        let MatBias = mat4.create();
+        mat4.translate(MatBias, MatBias,vec3.fromValues(0.5, 0.5, 0.5));
+        mat4.scale(MatBias, MatBias, vec3.fromValues(0.5, 0.5, 0.5));
+
+        mat4.multiply(this.m_ShadowMatrix, MatBias, this.m_ShadowMatrix);
 
         // passer en mode dessin dans la shadowmap
         this.m_ShadowMap.enable();
 
         // corriger le défaut "acné de surface"
-        //gl.enable(gl.POLYGON_OFFSET_FILL);
-        //gl.polygonOffset(1.0, 1.0);
+        gl.enable(gl.POLYGON_OFFSET_FILL);
+        gl.polygonOffset(1.0, 1.0);
 
         // corriger le défaut "murs volants" (l'ombre se détache des pieds de la vache)
-        //gl.enable(gl.CULL_FACE);
-        //gl.cullFace(gl.FRONT);
+        gl.enable(gl.CULL_FACE);
+        gl.cullFace(gl.FRONT);
 
         // dessiner la scène
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

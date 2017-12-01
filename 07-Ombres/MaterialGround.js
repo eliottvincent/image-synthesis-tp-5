@@ -73,8 +73,18 @@ class MaterialGround extends Material
                 float distancePointLight = posshadow.z;
 
                 // comparer la valeur donnée par la ShadowMap avec la distance du fragment à la lumière
-                float distanceObstacleLight = texture2D(ShadowMap, posshadow.xy).r;
-                return step(distancePointLight, distanceObstacleLight);
+                // float distanceObstacleLight = texture2D(ShadowMap, posshadow.xy).r;    
+                // return step(distancePointLight, distanceObstacleLight);
+                
+                const int nombre = 6;
+                float somme = 0.0;
+                for (int i=0; i<nombre; i++) {
+                    float angle = float(i) * 6.28 / float(nombre);
+                    vec2 delta = 0.005 * vec2(cos(angle), sin(angle));
+                    float distanceObstacleLight = texture2D(ShadowMap, posshadow.xy + delta).r;
+                    somme += step(distancePointLight, distanceObstacleLight);    
+                }
+                return somme / float(nombre);
             }
 
             void main()
