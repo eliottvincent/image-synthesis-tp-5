@@ -56,14 +56,68 @@ class MaterialRectangle extends Material
                 // altération des coordonnées de texture
                 vec2 modTexCoords = frgTexCoords;
                 const vec2 center = vec2(0.5, 0.5);
-                modTexCoords = (modTexCoords - center) * 0.7 + center;
+                const vec2 ratio = vec2(1024.0 / 768.0, 1.5);
+                // modTexCoords = (modTexCoords - center) * 0.7 + center;
+                
+                // conversation coordonnées cartésiennes -> polaires 
+                modTexCoords = modTexCoords - center;
+                float r = length(modTexCoords);
+                float a = atan(modTexCoords.t, modTexCoords.s);
+
+                // bizarre
+                // r = pow(r, 2.0);
+
+                // vagues 
+                // r = r + 0.02 * pow( sin(12.0 * r - time * 6.0), 7.0) ;
+
+                // rigolo + psychédélique
+                // r = r + pow(sin(r+ time), 7.0) ;
+
+                // altération de l'angle en fonction de la distance
+                // a = a + 2.0 * (0.707-r);
+
+                // penser à faire la conversion inverse (polaires -> cartésiennes) 
+                modTexCoords = r * vec2(cos(a), sin(a)) + center;
+
+                // distance au centre on peut utiliser pow ou sqrt
+                float dist = distance(modTexCoords, center);
+
+                // loupe (éloigner en fct de la distance)
+                modTexCoords = (modTexCoords - center) * dist * ratio + center;
+
+                // inversion de haut en bas 
+                // modTexCoords.t = 1.0 - modTexCoords.t;
+
+                // chercher les points vers le bas de l'image 
+                // modTexCoords.t =  modTexCoords.t * 0.5;
+
+                // transformation affine avec le centre pour n'afficher que celui là
+                // modTexCoords = (modTexCoords - center)*0.5 + center;
 
                 // accès au texel à ces nouvelles coordonnées de texture
-                vec3 color = texture2D(txColor, modTexCoords).rgb;
+                const float d = 0.002;
+                vec3 color00 = texture2D(txColor, modTexCoords + vec2(-d, -d)).rgb;
+                vec3 color01 = texture2D(txColor, modTexCoords + vec2(-d, 0)).rgb;
+                vec3 color02 = texture2D(txColor, modTexCoords + vec2(-d, +d)).rgb;
+                vec3 color03 = texture2D(txColor, modTexCoords + vec2(0, -d)).rgb;
+                vec3 color04 = texture2D(txColor, modTexCoords + vec2(0, 0)).rgb;
+                vec3 color05 = texture2D(txColor, modTexCoords + vec2(0, +d)).rgb;
+                vec3 color06 = texture2D(txColor, modTexCoords + vec2(+d, -d)).rgb;
+                vec3 color07 = texture2D(txColor, modTexCoords + vec2(+d, 0)).rgb;
+                vec3 color08 = texture2D(txColor, modTexCoords + vec2(+d, +d)).rgb;
 
+                // noyau de convolution 
+                vec3 color = -1.0*color00 + -1.0*color01 + -1.0*color02 + 
+                            -1.0*color03 + 9.0*color04 + -1.0*color05 + 
+                            -1.0*color06 + -1.0*color07 + -1.0*color08;
+                 
                 // modification de la couleur, exemple
-                color = clamp(color*2.0 - 0.5, 0.0, 1.0);
-
+                // color = clamp(color*2.0 - 0.5, 0.0, 1.0);
+                // color = 1.0 - color; // couleur inverse (negatif photo)
+                vec3 hsv = rgb2hsv(color);  // on passe en hsv
+                // hsv.g = 0.0;    // desaturation
+                color = hsv2rgb(hsv);   // on repasse en rgb
+                
                 gl_FragColor = vec4(color, 1.0);
             }`;
 
