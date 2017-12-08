@@ -60,17 +60,17 @@ class Billboard extends Mesh
         // ne rien faire s'il n'est pas prêt
         if (!this.m_Ready) return;
 
-/// PARTIE 9.2
+        /// PARTIE 9.2
         // mettre en place le blending
-//!//!//! PAS FAIT (à vous de le faire) !
+        gl.enable(gl.BLEND);
 
         // dessiner le rectangle face à la caméra
         super.onDraw(matP, matVM);
 
-/// PARTIE 9.2
+        /// PARTIE 9.2
         // arrêter le blending
-//!//!//! PAS FAIT (à vous de le faire) !
-     }
+        gl.disable(gl.BLEND);
+    }
 
 
     /**
@@ -83,27 +83,31 @@ class Billboard extends Mesh
         // ne rien faire s'il n'est pas prêt
         if (!this.m_Ready) return;
 
-/// PARTIE 9.2
+        /// PARTIE 9.2
         // mettre en place le blending
-//!//!//! PAS FAIT (à vous de le faire) !
+        gl.enable(gl.BLEND);
 
 
         /** dessiner l'ombre */
 
-/// PARTIE 9.5
+        /// PARTIE 9.5
         // rendre le matériau noir et un peu transparent
         this.m_Material.setCoefficients(0.0, 0.7);
         // activer la texture d'angle 0 pour l'ombre (soleil tjrs même position)
-        //!//!//! PAS FAIT (à vous de le faire) !
-        // désactiver le z-buffer
-        //!//!//! PAS FAIT (à vous de le faire) !
+        this.m_Material.setAngle(0.0);
+        // désactiver le depth-buffer
+        gl.disable(gl.DEPTH_TEST);
         // faire pivoter le billboard à plat par terre
-        //!//!//! PAS FAIT (à vous de le faire) !
+        let matVMtmp = mat4.create();
+        mat4.rotateX(matVMtmp, matVM, Utils.radians(90));
+
         // réduire la hauteur du billboard à 70%, en tenant compte de m_SizeX et m_SizeY
-        //!//!//! PAS FAIT (à vous de le faire) !
+        mat4.scale(matVMtmp, matVMtmp, vec3.fromValues(this.m_SizeX, this.m_SizeY * 0.7, 1.0));
         // dessiner le billboard
-        //!//!//! PAS FAIT (à vous de le faire) !
+        super.onDraw(matP, matVM);
+
         // réactiver le test du depth buffer
+        gl.enable(gl.DEPTH_TEST);
         //!//!//! PAS FAIT (à vous de le faire) !
         // rendre le matériau normal
         this.m_Material.setCoefficients(1.0, 1.0);
@@ -111,18 +115,18 @@ class Billboard extends Mesh
 
         /** dessiner le billboard */
 
-/// PARTIE 9.3
+        /// PARTIE 9.3
         // modifier la matrice matVM pour annuler toute rotation
         let matVMfixed = mat4.clone(matVM);
         // mettre des 0 et des 1 au bon endroit
-        // ah oui, il faut aussi tenir compte de la taille du billboard, this.m_SizeX et this.m_SizeY
-//!//!//! PAS FAIT (à vous de le faire) !
+        matVMfixed[0] = this.m_SizeX;    /* matVMfixed[4] = 0.0;*/    matVMfixed[8] = 0.0;
+        matVMfixed[1] = 0.0;    matVMfixed[5] *= this.m_SizeY;    matVMfixed[9] = 0.0;
+        matVMfixed[2] = 0.0;    /* matVMfixed[6] = 0.0;*/    matVMfixed[10] = 1.0;
 
-/// PARTIE 9.4
+        /// PARTIE 9.4
         // déterminer l'angle de vue et choisir l'image
-        let cosinus = 1.0;
-        let sinus = 0.0;
-//!//!//! PAS FAIT (à vous de le faire) !
+        let cosinus = matVM[0];
+        let sinus = matVM[2];
         let angle = Math.atan2(sinus, cosinus);
         // mise de l'angle dans la plage [0, 1[
         angle = angle/(2*Math.PI) + 1.0;
@@ -132,43 +136,46 @@ class Billboard extends Mesh
         // dessiner le rectangle face à la caméra
         super.onDraw(matP, matVMfixed);
 
-/// PARTIE 9.2
+        /// PARTIE 9.2
         // arrêter le blending
-//!//!//! PAS FAIT (à vous de le faire) !
-     }
+        gl.disable(gl.BLEND);
+    }
 
 
     /**
      * dessin du billboard sur l'écran, variante normale (gestion multiples billboards)
      * @param matP : matrice de projection perpective
-     * @param matVM : matrice de transformation de l'objet par rapport à la caméra (on n'en tient pas compte)
      */
-    onDraw(matP, matVM)
+    onDraw(matP)
     {
         // ne rien faire s'il n'est pas prêt
         if (!this.m_Ready) return;
 
-/// PARTIE 9.2
+        /// PARTIE 9.2
         // mettre en place le blending
-//!//!//! PAS FAIT (à vous de le faire) !
+        gl.enable(gl.BLEND);
 
         /** dessiner l'ombre */
 
-/// PARTIE 9.5
+        /// PARTIE 9.5
         // rendre le matériau noir et un peu transparent
         this.m_Material.setCoefficients(0.0, 0.7);
         // activer la texture d'angle 0 pour l'ombre (soleil tjrs même position)
-        //!//!//! PAS FAIT (à vous de le faire) !
-        // désactiver le z-buffer
-        //!//!//! PAS FAIT (à vous de le faire) !
+        this.m_Material.setAngle(0.0);
+
+        // désactiver le depth-buffer
+        gl.disable(gl.DEPTH_TEST);
+
         // faire pivoter le billboard à plat par terre
-        //!//!//! PAS FAIT (à vous de le faire) !
+        let matVMtmp = mat4.create();
+        mat4.rotateX(matVMtmp, this.m_MatVMorig, Utils.radians(90));
+
         // réduire la hauteur du billboard à 70%, en tenant compte de m_SizeX et m_SizeY
-        //!//!//! PAS FAIT (à vous de le faire) !
+        mat4.scale(matVMtmp, matVMtmp, vec3.fromValues(this.m_SizeX, this.m_SizeY * 0.7, 1.0))
         // dessiner le billboard
-        //!//!//! PAS FAIT (à vous de le faire) !
+        super.onDraw(matP, matVMtmp);
         // réactiver le test du depth buffer
-        //!//!//! PAS FAIT (à vous de le faire) !
+        gl.enable(gl.DEPTH_TEST);
         // rendre le matériau normal
         this.m_Material.setCoefficients(1.0, 1.0);
 
@@ -179,9 +186,9 @@ class Billboard extends Mesh
         // dessiner le rectangle face à la caméra
         super.onDraw(matP, this.m_MatVMfixed);
 
-/// PARTIE 9.2
+        /// PARTIE 9.2
         // arrêter le blending
-//!//!//! PAS FAIT (à vous de le faire) !
+        gl.disable(gl.BLEND);
     }
 
 
@@ -197,20 +204,24 @@ class Billboard extends Mesh
         // copier la matrice finale obtenue : elle positionne ce billboard par rapport à la caméra, mais on va la modifier
         mat4.copy(this.m_MatVMfixed, this.m_MatVMorig);
 
-/// PARTIE 9.6
+        /// PARTIE 9.6
         // la distance est dans modelview.translation.z
-        this.m_Distance = 15.0;
-//!//!//! PAS FAIT (à vous de le faire) !
+        this.m_Distance = matVM[14];
 
-/// PARTIE 9.4
+        // mettre des 0 et des 1 au bon endroit
+        this.m_MatVMfixed[0] = this.m_SizeX; this.m_MatVMfixed[8] = 0.0;
+        this.m_MatVMfixed[1] = 0.0; this.m_MatVMfixed[5] *= this.m_SizeY; this.m_MatVMfixed[9] = 0.0;
+
         // déterminer l'angle de vue et choisir l'image
-        let cosinus = 1.0;
-        let sinus = 0.0;
-//!//!//! PAS FAIT (à vous de le faire) !
+        let cosinus = matVM[0];
+        let sinus = matVM[2];
+
         let angle = Math.atan2(sinus, cosinus);
         // mise de l'angle dans la plage [0, 1[
         angle = angle/(2*Math.PI) + 1.0;
-        this.m_Angle = angle - Math.floor(angle);
+        angle = angle - Math.floor(angle);
+
+        this.m_Angle = angle;
 
         /** variante : le billboard est strictement face à la caméra **/
 

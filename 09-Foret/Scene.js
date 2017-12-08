@@ -139,35 +139,34 @@ class Scene
         this.m_Ground.onDraw(this.m_MatP, this.m_MatV);
 
 
-/// PARTIES 9.2 et 9.3 à commenter dès que ça marche
-        this.m_BbArbre1.onDrawVerySimple(this.m_MatP, this.m_MatV);
-        //this.m_BbArbre1.onDrawSimple(this.m_MatP, this.m_MatV);
+        /// PARTIES 9.2 et 9.3 à commenter dès que ça marche
+        // this.m_BbArbre1.onDrawVerySimple(this.m_MatP, this.m_MatV);
+        // this.m_BbArbre1.onDrawSimple(this.m_MatP, this.m_MatV);
 
-/// PARTIE 9.4 : décommentez ces deux lignes, et commentez celles de l'arbre ci-dessus
-//        this.m_BbChiffre.onDrawSimple(this.m_MatP, this.m_MatV);
+        /// PARTIE 9.4 : décommentez ces deux lignes, et commentez celles de l'arbre ci-dessus
+        // this.m_BbChiffre.onDrawSimple(this.m_MatP, this.m_MatV);
 
         // autre possibilité, pour utiliser la partie 9.6
-//        this.m_BbChiffre.setModelView(this.m_MatV);
-//        this.m_BbChiffre.onDrawSimple(this.m_MatP, this.m_MatV);
+        // this.m_BbChiffre.setModelView(this.m_MatV);
+        // this.m_BbChiffre.onDrawSimple(this.m_MatP, this.m_MatV);
 
+        // this.m_BbArbre1.setModelView(this.m_MatV);
+        // this.m_BbArbre1.onDraw(this.m_MatP);
 
-        //this.m_BbArbre1.setModelView(this.m_MatV);
-        //this.m_BbArbre1.onDraw(this.m_MatP, this.m_MatV);
+        // PARTIE 9.6 : décommentez toutes ces lignes, et commentez celles de l'arbre et du chiffre ci-dessus
+        // positionner chaque arbre
+        for (let tree of this.m_Forest) {
+            // positionner l'arbre => récupérer sa matrice ModelView pour avoir sa distance
+            tree.setModelView(this.m_MatV);
+        }
 
-/// PARTIE 9.6 : décommentez toutes ces lignes, et commentez celles de l'arbre et du chiffre ci-dessus
-//        // positionner chaque arbre
-//        for (let tree of this.m_Forest) {
-//            // positionner l'arbre => récupérer sa matrice ModelView pour avoir sa distance
-//            tree.setModelView(this.m_MatV);
-//        }
-//
-//        // classer par distance décroissante à l'oeil
-//       this.m_Forest.sort(Billboard.prototype.DistanceCompare);
-//
-//        // dessiner l'ensemble des arbres
-//        for (let tree of this.m_Forest) {
-//            tree.onDraw(this.m_MatP);
-//        }
+        // classer par distance décroissante à l'oeil
+       this.m_Forest.sort(Billboard.prototype.DistanceCompare);
+
+        // dessiner l'ensemble des arbres
+        for (let tree of this.m_Forest) {
+            tree.onDraw(this.m_MatP);
+        }
     }
 
 

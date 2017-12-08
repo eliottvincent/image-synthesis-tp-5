@@ -50,6 +50,7 @@ class Texture360Material extends Material
             {
                 // accès à la texture
                 vec4 color = texture(txColor, frgTexCoords);
+                if (color.a <= 0.01) discard;
 
                 // modulation de la couleur et la transparence
                 glFragColor = vec4(color.rgb*coefColor, color.a*coefAlpha);
